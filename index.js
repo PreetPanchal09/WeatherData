@@ -17,17 +17,19 @@ function graphPlot(data) {
     div.innerHTML = '';
 
     const plot = Plot.plot({
+        x: {tickFormat: Plot.formatMonth("en", "short"), label: "Date"},
+        y: {grid: true, label: "Temp"},
         marks: [
             Plot.ruleY([]),
-            Plot.lineY(data, {x: "time", y: "tempurature_2m_max", stroke: "red"}),
-            Plot.lineY(data, {x: "time", y: "tempurature_2m_min", stroke: "blue"})
+            Plot.lineY(data, {x: "time", y: "temperature_2m_max", stroke: "red"}),
+            Plot.lineY(data, {x: "time", y: "temperature_2m_min", stroke: "blue"})
         ]
     });
 
     div.append(plot);
 }
 
-async function getDataFromAPI({longitude = 40.713, latitude = -74.006, 
+async function getDataFromAPI({ 
     startDate = "2022-01-01", endDate="2022-12-31",
     dailyParameters=["temperature_2m_max", "temperature_2m_min"],
     units = {
@@ -38,9 +40,12 @@ async function getDataFromAPI({longitude = 40.713, latitude = -74.006,
     timezone="America/New_York"}
  = {})
     {
+    const latitude = document.querySelector("#latitude").value || "40.7143";
+    const longitude = document.querySelector("#longitude").value || "74.006";
+
     const BASEURL = "https://archive-api.open-meteo.com/v1/archive";
     let Request_URL = `${BASEURL}?latitude=${encode(latitude)}&longitude=${encode(longitude)}&start_date=${encode(startDate)}&end_date=${encode(endDate)}&daily=${dailyParameters.join(",")}&temperature_unit=${encode(units.temperature)}&windspeed_unit=${encode(units.windspeed)}&precipitation_unit=${encode(units.precipitation)}&timezone=${encode(timezone)}`;
-
+    console.log(Request_URL);
     const response = await fetch(Request_URL);
     
     if (response.ok) {
@@ -58,7 +63,11 @@ async function getDataFromAPI({longitude = 40.713, latitude = -74.006,
 }
 
 async function setUpPage() {
-    graphPlot(await getDataFromAPI());
+    const form = document.querySelector("#form");
+    form.addEventListener("change",async () => {
+        const data = await getDataFromAPI()
+        graphPlot(data);
+    });
 }
 
 ready(setUpPage)
