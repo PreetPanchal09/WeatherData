@@ -25,6 +25,7 @@ function graphPlot(data) {
     });
 
     div.append(plot);
+    div.append(document.createElement("h1").textContent = 'This work')
 }
 
 async function getDataFromAPI({longitude = 0, latitude = 0, 
@@ -60,3 +61,5 @@ async function getDataFromAPI({longitude = 0, latitude = 0,
 function setUpPage() {
     graphPlot(getDataFromAPI());
 }
+
+ready(setUpPage)
