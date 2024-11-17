@@ -28,7 +28,7 @@ function graphPlot(data) {
     div.append(document.createElement("h1").textContent = 'This work')
 }
 
-async function getDataFromAPI({longitude = 0, latitude = 0, 
+async function getDataFromAPI({longitude = 40.713, latitude = -74.006, 
     startDate = "2022-01-01", endDate="2022-12-31",
     dailyParameters=["temperature_2m_max", "temperature_2m_min"],
     units = {
