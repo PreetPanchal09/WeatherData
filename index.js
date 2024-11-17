@@ -14,18 +14,17 @@ function encode(text) {
 
 function graphPlot(data) {
     const div = document.querySelector("#plot");
-    div.textContent = '';
+    div.innerHTML = '';
 
     const plot = Plot.plot({
         marks: [
             Plot.ruleY([]),
-            Plot.lineY(data, {x: "time", y: "tempurature2m_max", stroke: "red"}),
-            Plot.lineY(data, {x: "time", y: "tempurature2m_min", stroke: "blue"})
+            Plot.lineY(data, {x: "time", y: "tempurature_2m_max", stroke: "red"}),
+            Plot.lineY(data, {x: "time", y: "tempurature_2m_min", stroke: "blue"})
         ]
     });
 
     div.append(plot);
-    div.append(document.createElement("h1").textContent = 'This work')
 }
 
 async function getDataFromAPI({longitude = 40.713, latitude = -74.006, 
@@ -39,13 +38,13 @@ async function getDataFromAPI({longitude = 40.713, latitude = -74.006,
     timezone="America/New_York"}
  = {})
     {
-    const BASEURL = "https://archive-api.open-meteo.com/v1/";
-    let Request_URL = `${BASEURL}?latitude=${encode(latitude)}&longitude=${encode(longitude)}&start_date=${encode(startDate)}&end_date=${encode(endDate)}&daily=${dailyParameters.join()}&temperature_unit=${encode(units.temperature)}&windspeed_unit=${encode(units.windspeed)}&precipitation_unit=${encode(units.precipitation)}&timezone=${encode(timezone)}`;
+    const BASEURL = "https://archive-api.open-meteo.com/v1/archive";
+    let Request_URL = `${BASEURL}?latitude=${encode(latitude)}&longitude=${encode(longitude)}&start_date=${encode(startDate)}&end_date=${encode(endDate)}&daily=${dailyParameters.join(",")}&temperature_unit=${encode(units.temperature)}&windspeed_unit=${encode(units.windspeed)}&precipitation_unit=${encode(units.precipitation)}&timezone=${encode(timezone)}`;
 
     const response = await fetch(Request_URL);
     
     if (response.ok) {
-        const weatherData = response.json();
+        const weatherData = await response.json();
         return weatherData.daily.time.map((time, idx) => {
             const data = {time: new Date(time)};
             dailyParameters.forEach(parameter => {
@@ -58,8 +57,8 @@ async function getDataFromAPI({longitude = 40.713, latitude = -74.006,
     }
 }
 
-function setUpPage() {
-    graphPlot(getDataFromAPI());
+async function setUpPage() {
+    graphPlot(await getDataFromAPI());
 }
 
 ready(setUpPage)
