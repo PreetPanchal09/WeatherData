@@ -13,13 +13,15 @@ function encode(text) {
 }
 
 function graphPlot(data) {
+    console.log(data);
     const div = document.querySelector("#plot");
     div.innerHTML = '';
 
     const plot = Plot.plot({
-        x: {tickFormat: Plot.formatMonth("en", "short"), label: "Date"},
+        x: {tickFormat: Plot.formatMonth("en", "short"), label: "Date", ticks: "month",
+            domain: [data[0].time, data[data.length - 1].time]},
         y: {grid: true, label: "Temp"},
-        marks: [
+        marks: [, 
             Plot.ruleY([]),
             Plot.lineY(data, {x: "time", y: "temperature_2m_max", stroke: "red"}),
             Plot.lineY(data, {x: "time", y: "temperature_2m_min", stroke: "blue"})
